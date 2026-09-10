@@ -3,10 +3,37 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FAC - Clover Authorization</title>
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+  <title>FAC · Clover</title>
+  <style>
+    body { font-family: Segoe UI, sans-serif; margin: 2rem; color: #222; }
+    p { max-width: 36rem; line-height: 1.4; }
+  </style>
 </head>
 <body>
-  <h1>FAC - Clover Authorization</h1>
-  <p>This endpoint is reserved for the FAC Clover OAuth flow.</p>
+  <p id="status">Conectando Clover con FAC…</p>
+  <p>Si el navegador no puede conectar, abre FAC e inicia nuevamente la conexión con Clover.</p>
+  <script>
+    (function () {
+      var LOOPBACK = 'http://127.0.0.1:53682/clover/oauth/launch';
+      var statusEl = document.getElementById('status');
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('code')) {
+        statusEl.textContent = 'No pudimos conectar con FAC. Abre FAC e inicia nuevamente la conexión con Clover.';
+        return;
+      }
+      var merchantId = params.get('merchant_id') || params.get('merchantId');
+      if (!merchantId) {
+        statusEl.textContent = 'No pudimos conectar con FAC. Abre FAC e inicia nuevamente la conexión con Clover.';
+        return;
+      }
+      var query = new URLSearchParams();
+      query.set('merchant_id', merchantId);
+      window.setTimeout(function () {
+        window.location.replace(LOOPBACK + '?' + query.toString());
+      }, 250);
+    })();
+  </script>
 </body>
 </html>
